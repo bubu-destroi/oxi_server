@@ -5,7 +5,7 @@ const userSchema = new Schema(
   {
     parent_name: {
       type: String,
-      required: [tue, 'Parent name is required'],
+      required: [true, 'Parent name is required'],
     },
     address: {
       type: String,

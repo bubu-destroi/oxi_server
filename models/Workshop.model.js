@@ -80,6 +80,6 @@ const workshopSchema = new Schema(
   }
 );
 
-const User = model('Workshop', workshopSchema);
+const Workshop = model('Workshop', workshopSchema);
 
 module.exports = Workshop;

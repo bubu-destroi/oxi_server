@@ -25,6 +25,12 @@ app.use("/auth", authRoutes);
 const workshopRoutes = require("./routes/workshop.routes");
 app.use("/api", workshopRoutes);
 
+const wishlistRoutes = require("./routes/wishlist.routes");
+app.use("/api", wishlistRoutes);
+
+const teacherRoutes = require("./routes/teacher.routes");
+app.use("/api", teacherRoutes);
+
 
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);

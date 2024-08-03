@@ -10,6 +10,9 @@ const workshopSchema = new Schema(
       type: String,
       required: [true, 'Description is required.'],
     },
+    image: {
+      type: String,
+    },
     duration: {
       type: String,
       required: [true, 'Duration is required.'],

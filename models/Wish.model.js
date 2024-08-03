@@ -22,7 +22,6 @@ const wishSchema = new Schema({
       'philosophy',
       'literature',
       'technologies',
-      
     ],
   },
   subcategory: {
@@ -33,6 +32,14 @@ const wishSchema = new Schema({
   },
   img: {
     type: String,
-    default: 'logo oxitoficina'
+    default:
+      'https://cdn.myportfolio.com/60cb4387-4320-4a64-9df1-40a0d496f12d/bc6a13c3-fbb5-4eeb-b0aa-f0cb987bb1f6.png?h=5acb79b7d88727c455c86674a58df7a0',
+  },
+  age_of_wisher: {
+    type: Number,
+    required: [true, 'we need to know your age to fit the content '],
   },
 });
+
+const Wish = model('Wish', wishSchema);
+module.exports = Wish;

@@ -7,6 +7,7 @@ router.post('/workshops', async (req, res, next) => {
     const {
       title,
       description,
+      image,
       duration,
       price,
       category,
@@ -44,6 +45,7 @@ router.post('/workshops', async (req, res, next) => {
     const newWorkshop = await Workshop.create({
       title,
       description,
+      image,
       duration,
       price,
       category,
@@ -92,6 +94,7 @@ router.put('/workshops/:workshopID', async (req, res, next) => {
     const {
       title,
       description,
+      image,
       duration,
       price,
       category,
@@ -112,6 +115,7 @@ router.put('/workshops/:workshopID', async (req, res, next) => {
       {
         title,
         description,
+        image,
         duration,
         price,
         category,

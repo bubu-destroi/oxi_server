@@ -12,8 +12,11 @@ const teacherSchema = new Schema({
   socialMedia: {
     type: String,
   },
-  previous_workshops: {
+  previous_workshops: [{
     type: Schema.Types.ObjectId,
     ref: 'Workshop',
-  },
+  }],
 });
+
+const Teacher = model('Teacher', teacherSchema);
+module.exports = Teacher;

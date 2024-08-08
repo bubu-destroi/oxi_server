@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Workshop = require('../models/Workshop.model');
+const Teacher = require('../models/Teacher.model');
 
 router.post('/workshops', async (req, res, next) => {
   try {
@@ -20,7 +21,6 @@ router.post('/workshops', async (req, res, next) => {
       maximum_age,
       maxParticipants,
       minParticipants,
-      signedupUsers,
     } = req.body;
 
     if (
@@ -45,7 +45,9 @@ router.post('/workshops', async (req, res, next) => {
     const newWorkshop = await Workshop.create({
       title,
       description,
-      image,
+      image: image
+        ? image
+        : 'https://cdn.myportfolio.com/60cb4387-4320-4a64-9df1-40a0d496f12d/bc6a13c3-fbb5-4eeb-b0aa-f0cb987bb1f6.png?h=5acb79b7d88727c455c86674a58df7a0',
       duration,
       price,
       category,
@@ -58,8 +60,23 @@ router.post('/workshops', async (req, res, next) => {
       maximum_age,
       maxParticipants,
       minParticipants,
-      signedupUsers,
     });
+    //fazer push de um id para dentro dum array
+    //$ sintaxe mongoDB
+    const foundTeachers = await Teacher.find({ _id: { $in: teacher } });
+    if (foundTeachers) {
+      foundTeachers.forEach(async (singleTeacher) => {
+        singleTeacher.previous_workshops.push(newWorkshop._id);
+        await singleTeacher.save()
+
+      });
+    }
+
+ /*    await Teacher.findByIdAndUpdate(teacher, {
+      $push: {
+        previous_workshops: newWorkshop._id,
+      },
+    }); */
     res.status(201).json(newWorkshop);
   } catch (error) {
     next(error);

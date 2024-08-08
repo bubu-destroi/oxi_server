@@ -38,14 +38,24 @@ const userSchema = new Schema(
       type: Date,
       required: [true, 'Age is required for the workshops conditions'],
     },
-    wishes:[{
-      type: Schema.Types.ObjectId,
-      ref: 'Wish',
-    }],
-    courses_taken: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Workshop',
-    }],
+    wishes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Wish',
+      },
+    ],
+    signedUp_workshops: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Workshop',
+      },
+    ],
+    courses_taken: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Workshop',
+      },
+    ],
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`

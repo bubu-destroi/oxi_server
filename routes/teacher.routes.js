@@ -15,7 +15,6 @@ router.post('/teachers', async (req, res, next) => {
       name,
       bio,
       socialMedia,
-      previous_workshops,
     });
     res.status(201).json(newTeacher);
   } catch (error) {
@@ -37,10 +36,9 @@ router.get('/teachers', async (req, res, next) => {
 router.get('/teachers/:teacherID', async (req, res, next) => {
   try {
     const { teacherID } = req.params;
-    const singleTeacher = await Teacher.findById(teacherID);
-    /* .populate(
-      'workshops'
-    ); */
+    const singleTeacher = await Teacher.findById(teacherID).populate(
+      'previous_workshops'
+    ); 
     res.status(200).json(singleTeacher);
   } catch (error) {
     console.log(error);

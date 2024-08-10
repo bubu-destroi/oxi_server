@@ -20,6 +20,7 @@ const saltRounds = 10;
 router.post('/signup', async (req, res, next) => {
   try {
     const {
+      admin = false,
       parent_name,
       address,
       phone_number,
@@ -83,6 +84,7 @@ router.post('/signup', async (req, res, next) => {
     // We return a pending promise, which allows us to chain another `then`
 
     const newUser = await User.create({
+      admin,
       parent_name,
       address,
       phone_number,
@@ -95,6 +97,7 @@ router.post('/signup', async (req, res, next) => {
       courses_taken,
     });
     const cleanUser = {
+      admin: newUser.admin,
       _id: newUser._id,
       parent_name: newUser.parent_name,
       address: newUser.address,
@@ -131,9 +134,10 @@ router.post('/login', async (req, res, next) => {
       return;
     }
 
-    const {_id, learner_username} = userExists;
+    const {_id, learner_username, admin} = userExists;
     //same as: const payload= {_id: userExists._id, username: userExists.username, email}
     const payload = {
+      admin,
       _id,
       email,
       learner_username,

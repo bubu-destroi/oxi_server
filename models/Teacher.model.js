@@ -5,6 +5,10 @@ const teacherSchema = new Schema({
     type: String,
     required: [true, 'Name is required'],
   },
+  email: {
+    type: String,
+    required: [true, 'email is required'],
+  },
   bio: {
     type: String,
     required: [true, 'Bio is required'],
@@ -12,10 +16,12 @@ const teacherSchema = new Schema({
   socialMedia: {
     type: String,
   },
-  previous_workshops: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Workshop',
-  }],
+  previous_workshops: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Workshop',
+    },
+  ],
 });
 
 const Teacher = model('Teacher', teacherSchema);

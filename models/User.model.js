@@ -3,6 +3,9 @@ const { Schema, model } = require('mongoose');
 // TODO: Please make sure you edit the User model to whatever makes sense in this case
 const userSchema = new Schema(
   {
+    admin: {
+      type: Boolean,
+    },
     parent_name: {
       type: String,
       required: [true, 'Parent name is required'],
@@ -45,6 +48,12 @@ const userSchema = new Schema(
       },
     ],
     signedUp_workshops: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Workshop',
+      },
+    ],
+    userWaitingList: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Workshop',

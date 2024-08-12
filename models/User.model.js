@@ -39,6 +39,10 @@ const userSchema = new Schema(
     },
     date_of_birth: {
       type: Date,
+      required: [true, 'date of birth is required for the workshops conditions'],
+    },
+    age: {
+      type: Number,
       required: [true, 'Age is required for the workshops conditions'],
     },
     wishes: [

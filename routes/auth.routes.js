@@ -29,6 +29,7 @@ router.post('/signup', async (req, res, next) => {
       password,
       learner_username,
       date_of_birth,
+      age,
       wishes,
       courses_taken,
     } = req.body;
@@ -93,6 +94,7 @@ router.post('/signup', async (req, res, next) => {
       password: hashedPassword,
       learner_username,
       date_of_birth,
+      age,
       wishes,
       courses_taken,
     });
@@ -106,6 +108,7 @@ router.post('/signup', async (req, res, next) => {
       email: newUser.email,
       learner_username: newUser.learner_username,
       date_of_birth: newUser.date_of_birth,
+      age: newUser.age,
       wishes: newUser.wishes,
       courses_taken: newUser.courses_taken,
     };

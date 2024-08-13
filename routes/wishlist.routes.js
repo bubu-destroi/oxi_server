@@ -5,7 +5,8 @@ const User = require('../models/User.model');
 
 router.post('/wishlist', async (req, res, next) => {
   try {
-    const { title, description, category, subcategory, remote, img, userID } =
+    
+    const { title, description, category, subcategory,img, remote, userID } =
       req.body;
     if (title === '' || description === '') {
       res.status(400).json({
@@ -21,7 +22,7 @@ router.post('/wishlist', async (req, res, next) => {
       subcategory,
       remote,
       img,
-      age_of_wisher: foundUser.date_of_birth,
+      age_of_wisher: foundUser.age,
     });
     const updatedUser = await User.findByIdAndUpdate(
       userID,

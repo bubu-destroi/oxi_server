@@ -17,7 +17,7 @@ router.post('/workshops', async (req, res, next) => {
       place,
       subcategory,
       date,
-      teacher,
+      teachers,
       minimum_age,
       maximum_age,
       maxParticipants,
@@ -34,7 +34,7 @@ router.post('/workshops', async (req, res, next) => {
       place === '' ||
       subcategory === '' ||
       date === '' ||
-      teacher === '' ||
+      teachers === '' ||
       minimum_age === '' ||
       maxParticipants === '' ||
       minParticipants === ''
@@ -56,7 +56,7 @@ router.post('/workshops', async (req, res, next) => {
       place,
       subcategory,
       date,
-      teacher,
+      teachers,
       minimum_age,
       maximum_age,
       maxParticipants,
@@ -64,7 +64,7 @@ router.post('/workshops', async (req, res, next) => {
     });
     //fazer push de um id para dentro dum array
     //$ sintaxe mongoDB
-    const foundTeachers = await Teacher.find({ _id: { $in: teacher } });
+    const foundTeachers = await Teacher.find({ _id: { $in: teachers } });
     if (foundTeachers) {
       foundTeachers.forEach(async (singleTeacher) => {
         singleTeacher.previous_workshops.push(newWorkshop._id);
@@ -85,7 +85,7 @@ router.post('/workshops', async (req, res, next) => {
 
 router.get('/workshops', async (req, res, next) => {
   try {
-    const allWorkshops = await Workshop.find().populate('teacher','name');
+    const allWorkshops = await Workshop.find().populate('teachers','name');
     res.status(200).json(allWorkshops);
   } catch (error) {
     next(error);
@@ -97,7 +97,7 @@ router.get('/workshops/:workshopID', async (req, res, next) => {
     const { workshopID } = req.params;
     const singleWorkshop = await Workshop.findById(
       workshopID
-    ).populate('teacher', 'name')
+    ).populate('teachers', 'name')
     res.status(200).json(singleWorkshop);
   } catch (error) {
     console.log(error);
@@ -119,7 +119,7 @@ router.put('/workshops/:workshopID', async (req, res, next) => {
       place,
       subcategory,
       date,
-      teacher,
+      teachers,
       minimum_age,
       maximum_age,
       maxParticipants,
@@ -140,7 +140,7 @@ router.put('/workshops/:workshopID', async (req, res, next) => {
         place,
         subcategory,
         date,
-        teacher,
+        teachers,
         minimum_age,
         maximum_age,
         maxParticipants,

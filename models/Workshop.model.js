@@ -52,7 +52,7 @@ const workshopSchema = new Schema(
       type: Date,
       required: [true, 'Date is required.'],
     },
-    teacher: [
+    teachers: [
       {
         type: Schema.Types.ObjectId,
         ref: 'Teacher',

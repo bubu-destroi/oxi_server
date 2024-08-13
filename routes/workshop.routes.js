@@ -85,7 +85,7 @@ router.post('/workshops', async (req, res, next) => {
 
 router.get('/workshops', async (req, res, next) => {
   try {
-    const allWorkshops = await Workshop.find();
+    const allWorkshops = await Workshop.find().populate('teacher','name');
     res.status(200).json(allWorkshops);
   } catch (error) {
     next(error);
@@ -97,7 +97,7 @@ router.get('/workshops/:workshopID', async (req, res, next) => {
     const { workshopID } = req.params;
     const singleWorkshop = await Workshop.findById(
       workshopID
-    ); /* .populate('teacher', 'user') */
+    ).populate('teacher', 'name')
     res.status(200).json(singleWorkshop);
   } catch (error) {
     console.log(error);

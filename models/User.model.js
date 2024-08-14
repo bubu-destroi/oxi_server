@@ -66,6 +66,13 @@ const userSchema = new Schema(
         ref: 'Workshop',
       },
     ],
+    userWishWaitingList: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Wish',
+      },
+    ],
+
     courses_taken: [
       {
         type: Schema.Types.ObjectId,

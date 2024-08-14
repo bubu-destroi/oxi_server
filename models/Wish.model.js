@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-const User = require('../models/User.model')
+const User = require('../models/User.model');
 
 const wishSchema = new Schema({
   title: {
@@ -27,6 +27,14 @@ const wishSchema = new Schema({
   age_of_wisher: {
     type: Number,
   },
+  created_by: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
+  interested_users: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  }],
 });
 
 const Wish = model('Wish', wishSchema);

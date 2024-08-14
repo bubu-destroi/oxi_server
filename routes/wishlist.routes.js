@@ -7,12 +7,12 @@ router.post('/wishlist', async (req, res, next) => {
   try {
     const { title, description, category, subcategory, img, remote, userID } =
       req.body;
-      const foundUser = await User.findById(userID);
+    const foundUser = await User.findById(userID);
     if (title === '' || description === '') {
       res.status(400).json({
         message: 'provide at least title, description',
       });
-      if(!foundUser){
+      if (!foundUser) {
         return res.status(404).json({ message: 'User not found' });
       }
       return;
@@ -25,6 +25,7 @@ router.post('/wishlist', async (req, res, next) => {
       remote,
       img,
       age_of_wisher: foundUser.age,
+      created_by: foundUser._id,
     });
     const updatedUser = await User.findByIdAndUpdate(
       userID,
@@ -35,8 +36,8 @@ router.post('/wishlist', async (req, res, next) => {
       },
       { new: true }
     ).populate('wishes', 'title');
-    console.log(updatedUser)
-    res.status(201).json({newWish, updatedUser});
+    console.log(updatedUser);
+    res.status(201).json({ newWish, updatedUser });
   } catch (error) {
     console.log(error);
     next(error);
@@ -55,7 +56,7 @@ router.get('/wishlist', async (req, res, next) => {
 router.get('/wishlist/:wishID', async (req, res, next) => {
   try {
     const { wishID } = req.params;
-    const singleWish = await Wish.findById(wishID);
+    const singleWish = await Wish.findById(wishID).populate('interested_users');
     res.status(200).json(singleWish);
   } catch (error) {
     console.log(error);
@@ -67,7 +68,7 @@ router.put('/wishlist/:wishID', async (req, res, next) => {
   try {
     const { wishID } = req.params;
 
-    const { title, description, category, subcategory, remote, img } = req.body;
+    const { title, description, category, subcategory, remote, img, userID } = req.body;
     const updatedWish = await Wish.findByIdAndUpdate(
       wishID,
       {
@@ -82,6 +83,50 @@ router.put('/wishlist/:wishID', async (req, res, next) => {
     );
 
     res.status(200).json(updatedWish);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+router.put('/wishlist/:wishID/join', async (req, res, next) => {
+  try {
+    const { wishID } = req.params;
+    const { userID } = req.body;
+
+    const foundUser = await User.findById(userID);
+    //added age_of_wisher, created_by, interested_users
+    /*   const {
+      title,
+      description,
+      category,
+      subcategory,
+      remote,
+      img,
+      age_of_wisher,
+      created_by,
+      interested_users,
+    } = req.body; */
+    const updatedWish = await Wish.findByIdAndUpdate(
+      wishID,
+      {
+        $push: {
+          interested_users: userID,
+        },
+      },
+      { new: true }
+    );
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userID,
+      {
+        $push: {
+          userWishWaitingList: wishID,
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).json({updatedWish, updatedUser});
   } catch (error) {
     console.log(error);
     next(error);

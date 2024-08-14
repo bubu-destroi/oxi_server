@@ -5,16 +5,18 @@ const User = require('../models/User.model');
 
 router.post('/wishlist', async (req, res, next) => {
   try {
-    
-    const { title, description, category, subcategory,img, remote, userID } =
+    const { title, description, category, subcategory, img, remote, userID } =
       req.body;
+      const foundUser = await User.findById(userID);
     if (title === '' || description === '') {
       res.status(400).json({
         message: 'provide at least title, description',
       });
+      if(!foundUser){
+        return res.status(404).json({ message: 'User not found' });
+      }
       return;
     }
-    const foundUser = await User.findById(userID);
     const newWish = await Wish.create({
       title,
       description,
@@ -28,12 +30,13 @@ router.post('/wishlist', async (req, res, next) => {
       userID,
       {
         $push: {
-          wishlist: newWish,
+          wishes: newWish._id,
         },
       },
       { new: true }
-    );
-    res.status(201).json(newWish);
+    ).populate('wishes', 'title');
+    console.log(updatedUser)
+    res.status(201).json({newWish, updatedUser});
   } catch (error) {
     console.log(error);
     next(error);

@@ -85,7 +85,7 @@ router.post('/workshops', async (req, res, next) => {
 
 router.get('/workshops', async (req, res, next) => {
   try {
-    const allWorkshops = await Workshop.find().populate('teachers','name');
+    const allWorkshops = await Workshop.find().populate('teachers', 'name');
     res.status(200).json(allWorkshops);
   } catch (error) {
     next(error);
@@ -95,9 +95,10 @@ router.get('/workshops', async (req, res, next) => {
 router.get('/workshops/:workshopID', async (req, res, next) => {
   try {
     const { workshopID } = req.params;
-    const singleWorkshop = await Workshop.findById(
-      workshopID
-    ).populate('teachers', 'name')
+    const singleWorkshop = await Workshop.findById(workshopID).populate(
+      'teachers',
+      'name'
+    );
     res.status(200).json(singleWorkshop);
   } catch (error) {
     console.log(error);
@@ -157,24 +158,39 @@ router.put('/workshops/:workshopID', async (req, res, next) => {
 });
 
 router.put('/workshops/:workshopID/join', async (req, res, next) => {
-  
   try {
-    
     const { workshopID } = req.params;
     const { userID } = req.body;
-    //enviar frontend 
+    //enviar frontend
 
-    const foundWorkshop = await Workshop.findById(workshopID)
-    if(foundWorkshop.maxParticipants <= foundWorkshop.signedupUsers.length){
-      await Workshop.findByIdAndUpdate(
-        workshopID,
-        {
-          $push: {
-            waitingList: userID,
+    const foundWorkshop = await Workshop.findById(workshopID);
+    const isSignedUp = foundWorkshop.signedupUsers.includes(userID);
+    const isInWaitingList = foundWorkshop.waitingList.includes(userID);
+
+    if (isSignedUp) {
+      return res
+        .status(400)
+        .json({ message: 'You are already signed up for this workshop.' });
+    }
+
+    if (isInWaitingList) {
+      return res
+        .status(400)
+        .json({
+          message: 'You are already on the waiting list for this workshop.',
+        });
+    }
+    if (foundWorkshop.maxParticipants <= foundWorkshop.signedupUsers.length) {
+      if (User.signedUp_workshops)
+        await Workshop.findByIdAndUpdate(
+          workshopID,
+          {
+            $push: {
+              waitingList: userID,
+            },
           },
-        },
-        { new: true }
-      );
+          { new: true }
+        );
       await User.findByIdAndUpdate(
         userID,
         {
@@ -184,8 +200,10 @@ router.put('/workshops/:workshopID/join', async (req, res, next) => {
         },
         { new: true }
       );
-      res.status(400).json({message: 'workshop full! you are in the waiting list :) '})
-      return
+      res
+        .status(400)
+        .json({ message: 'workshop full! you are in the waiting list :) ' });
+      return;
     }
     const updatedWorkshop = await Workshop.findByIdAndUpdate(
       workshopID,
@@ -196,7 +214,7 @@ router.put('/workshops/:workshopID/join', async (req, res, next) => {
       },
       { new: true }
     );
-//copiar isto para a rota wish no primeiro post
+    //copiar isto para a rota wish no primeiro post
     const updatedUser = await User.findByIdAndUpdate(
       userID,
       {
@@ -207,12 +225,10 @@ router.put('/workshops/:workshopID/join', async (req, res, next) => {
       { new: true }
     );
 
-
     res.status(200).json(updatedWorkshop);
   } catch (error) {
     console.log(error);
   }
-
 });
 
 router.delete('/workshops/:workshopID', async (req, res, next) => {

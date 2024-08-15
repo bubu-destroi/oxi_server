@@ -68,7 +68,8 @@ router.put('/wishlist/:wishID', async (req, res, next) => {
   try {
     const { wishID } = req.params;
 
-    const { title, description, category, subcategory, remote, img, userID } = req.body;
+    const { title, description, category, subcategory, remote, img, userID } =
+      req.body;
     const updatedWish = await Wish.findByIdAndUpdate(
       wishID,
       {
@@ -92,7 +93,7 @@ router.put('/wishlist/:wishID/join', async (req, res, next) => {
   try {
     const { wishID } = req.params;
     const { userID } = req.body;
-
+    const foundWish = await Wish.findById(wishID);
     const foundUser = await User.findById(userID);
     //added age_of_wisher, created_by, interested_users
     /*   const {
@@ -106,6 +107,14 @@ router.put('/wishlist/:wishID/join', async (req, res, next) => {
       created_by,
       interested_users,
     } = req.body; */
+    const isInWaitingList = foundWish.interested_users.includes(userID);
+    if (isInWaitingList) {
+      return res
+        .status(400)
+        .json({
+          messge: 'You have already shown interested to join this workshop!',
+        });
+    }
     const updatedWish = await Wish.findByIdAndUpdate(
       wishID,
       {
@@ -126,7 +135,7 @@ router.put('/wishlist/:wishID/join', async (req, res, next) => {
       { new: true }
     );
 
-    res.status(200).json({updatedWish, updatedUser});
+    res.status(200).json({ updatedWish, updatedUser });
   } catch (error) {
     console.log(error);
     next(error);

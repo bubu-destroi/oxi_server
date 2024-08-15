@@ -137,7 +137,7 @@ router.post('/login', async (req, res, next) => {
       return;
     }
 
-    const {_id, learner_username, admin} = userExists;
+    const { _id, learner_username, admin } = userExists;
     //same as: const payload= {_id: userExists._id, username: userExists.username, email}
     const payload = {
       admin,

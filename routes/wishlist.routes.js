@@ -79,6 +79,7 @@ router.put('/wishlist/:wishID', async (req, res, next) => {
         subcategory,
         remote,
         img,
+        created_by,
       },
       { new: true }
     );

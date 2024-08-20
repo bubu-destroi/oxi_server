@@ -15,6 +15,8 @@ const app = express();
 // ℹ️ This function is getting exported from the config folder. It runs most pieces of middleware
 require("./config")(app);
 
+
+
 // 👇 Start handling routes here
 const indexRoutes = require("./routes/index.routes");
 app.use("/api", indexRoutes);
@@ -34,7 +36,14 @@ app.use("/api", wishlistRoutes);
 const teacherRoutes = require("./routes/teacher.routes");
 app.use("/api", teacherRoutes);
 
+const proposalRoutes = require("./routes/proposal.routes");
+app.use("/api", proposalRoutes);
 
+app.use((err, req, res, next) => {
+    console.error(err.stack); // Logs the error details to the console
+    res.status(500).json({ message: 'Something went wrong', error: err.message });
+  });
+  
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require("./error-handling")(app);
 

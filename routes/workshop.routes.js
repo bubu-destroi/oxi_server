@@ -174,11 +174,9 @@ router.put('/workshops/:workshopID/join', async (req, res, next) => {
     }
 
     if (isInWaitingList) {
-      return res
-        .status(400)
-        .json({
-          message: 'You are already on the waiting list for this workshop.',
-        });
+      return res.status(400).json({
+        message: 'You are already on the waiting list for this workshop.',
+      });
     }
     if (foundWorkshop.maxParticipants <= foundWorkshop.signedupUsers.length) {
       if (User.signedUp_workshops)

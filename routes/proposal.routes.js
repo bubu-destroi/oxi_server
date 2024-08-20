@@ -36,6 +36,19 @@ router.post('/proposals', async (req, res, next) => {
       minParticipants,
     } = req.body;
 
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    const selectedDate = new Date(date);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < tomorrow) {
+      return res
+        .status(400)
+        .json({ message: 'The date must be tomorrow or later.' });
+    }
+
     if (
       name === '' ||
       bio === '' ||
@@ -49,7 +62,6 @@ router.post('/proposals', async (req, res, next) => {
       place === '' ||
       subcategory === '' ||
       date === '' ||
-      teachers === '' ||
       minimum_age === '' ||
       maxParticipants === '' ||
       minParticipants === ''
@@ -75,35 +87,73 @@ router.post('/proposals', async (req, res, next) => {
       place,
       subcategory,
       date,
-      teachers,
+      teachers: name,
       minimum_age,
       maximum_age,
       maxParticipants,
       minParticipants,
     });
 
+    const proposalDetails = `
+      New Workshop Proposal Submitted
+
+      Name: ${name}
+      Bio: ${bio}
+      Email: ${email}
+      Social Media: ${socialMedia}
+      Title: ${title}
+      Description: ${description}
+      Teachers: ${name}
+      Image URL: ${image}
+      Duration: ${duration}
+      Price: €${price}
+      Category: ${category}
+      Subcategory: ${subcategory}
+      Remote: ${remote ? 'Yes' : 'No'}
+      Place: ${place}
+      Date: ${new Date(date).toLocaleDateString()}
+      Minimum Age: ${minimum_age}
+      Maximum Age: ${maximum_age || 'None'}
+      Maximum Participants: ${maxParticipants || 'No limit'}
+      Minimum Participants: ${minParticipants}
+    `;
+
     // Email notification logic
-    const mailOptions = {
+    const mailOptionsAdmin = {
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
       subject: 'New Workshop Proposal Submitted',
-      text: `A new proposal has been submitted:\n\nTitle: ${title}\nDescription: ${description}\nCategory: ${category}\nSubcategory: ${subcategory}\nProposed by: ${name}\nEmail: ${email}`,
+      text: proposalDetails,
     };
- 
+
     const mailOptionsUser = {
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Your Workshop Proposal Confirmation',
-      text: `Dear ${name},\n\nThank you for submitting a workshop proposal. Here are the details:\n\nTitle: ${title}\nDescription: ${description}\nCategory: ${category}\nSubcategory: ${subcategory}\n\nWe will review your proposal and get back to you soon.\n\nBest regards,\nThe Team`,
+      text: `Dear ${name},\n\nThank you for submitting your workshop proposal. Here are the details:\n\n${proposalDetails}\n\nWe will review your proposal and get back to you soon.\n\n If there is anything missing, please get in touch. \n\n Best regards,\nOXITOFICINA Team`,
     };
-    
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return res.status(500).json({ message: 'Proposal created, but failed to send email' });
-      }
-      res.status(201).json({ message: 'Proposal submitted and email sent successfully', newProposal });
-    });
 
+    transporter.sendMail(mailOptionsAdmin, (error, info) => {
+      if (error) {
+        return res.status(500).json({
+          message: 'Proposal created, but failed to send email to admin',
+        });
+      }
+
+      // Attempt to send email to user
+      transporter.sendMail(mailOptionsUser, (userError, userInfo) => {
+        if (userError) {
+          return res.status(500).json({
+            message: 'Proposal created, but failed to send email to user',
+          });
+        }
+
+        res.status(201).json({
+          message: 'Proposal submitted and emails sent successfully',
+          newProposal,
+        });
+      });
+    });
   } catch (error) {
     next(error);
   }
@@ -113,6 +163,81 @@ router.get('/proposals', async (req, res, next) => {
   try {
     const allProposals = await Proposal.find();
     res.status(200).json(allProposals);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/proposals/:proposalID', async (req, res, next) => {
+  try {
+    const { proposalID } = req.params;
+    const singleProposal = await Proposal.findById(proposalID);
+    res.status(200).json(singleProposal);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/proposals/:proposalID', async (req, res, next) => {
+  try {
+    const { proposalID } = req.params;
+    const {
+      name,
+      bio,
+      email,
+      socialMedia,
+      title,
+      description,
+      image,
+      duration,
+      price,
+      category,
+      subcategory,
+      remote,
+      place,
+      date,
+      teachers,
+      minimum_age,
+      maximum_age,
+      maxParticipants,
+      minParticipants,
+    } = req.body;
+    const updatedProposal = await Proposal.findByIdAndUpdate(
+      proposalID,
+      {
+        name,
+        bio,
+        email,
+        socialMedia,
+        title,
+        description,
+        image,
+        duration,
+        price,
+        category,
+        subcategory,
+        remote,
+        place,
+        date,
+        teachers,
+        minimum_age,
+        maximum_age,
+        maxParticipants,
+        minParticipants,
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedProposal);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete('/proposals/:proposalID', async (req, res, next) => {
+  try {
+    const { proposalID } = req.params;
+    await Proposal.findByIdAndDelete(proposalID);
+    res.status(200).json({ message: 'Proposal deleted' });
   } catch (error) {
     next(error);
   }

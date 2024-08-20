@@ -49,7 +49,7 @@ router.get('/wishlist', async (req, res, next) => {
     const allWishes = await Wish.find();
     res.status(200).json(allWishes);
   } catch {
-    console.log(error);
+    console.log('error fetching all wishes');
   }
 });
 

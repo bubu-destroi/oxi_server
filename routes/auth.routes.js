@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt');
 // ℹ️ Handles password encryption
 const jwt = require('jsonwebtoken');
 
+const nodemailer = require('nodemailer')
+
 // Require the User model in order to interact with the database
 const User = require('../models/User.model');
 
@@ -15,6 +17,14 @@ const { isAuthenticated } = require('../middleware/jwt.middleware.js');
 
 // How many rounds should bcrypt run the salt (default - 10 rounds)
 const saltRounds = 10;
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // Example for Gmail; change this for other services
+  auth: {
+    user: process.env.EMAIL_USERNAME, // Your email address
+    pass: process.env.EMAIL_PASSWORD,  // Your email password or app password
+  },
+});
 
 // POST /auth/signup  - Creates a new user in the database
 router.post('/signup', async (req, res, next) => {
@@ -112,6 +122,39 @@ router.post('/signup', async (req, res, next) => {
       wishes: newUser.wishes,
       courses_taken: newUser.courses_taken,
     };
+
+    const adminMailOptions = {
+      from: process.env.EMAIL_USERNAME,
+      to: process.env.EMAIL_USERNAME,
+      subject: 'New User Signup Notification',
+      text: `A new user has signed up:\n\nName: ${newUser.learner_username}\nEmail: ${newUser.email}`,
+    };
+
+    transporter.sendMail(adminMailOptions, (error, info) => {
+      if (error) {
+        console.log('Error sending notification email:', error);
+      } else {
+        console.log('Notification email sent:', info.response);
+      }
+    });
+
+    // Send welcome email to new user
+    const userMailOptions = {
+      from: process.env.EMAIL_USERNAME,
+      to: newUser.email,
+      subject: 'Welcome to Oxitoficina!',
+      text: `Thank you for creating an account! We will approve your profile as soon as possible, but you can start looking at workshops and placing your wishes! See you soon,\n\nZarolina from Oxitoficina`,
+    };
+
+    transporter.sendMail(userMailOptions, (error, info) => {
+      if (error) {
+        console.log('Error sending welcome email:', error);
+      } else {
+        console.log('Welcome email sent:', info.response);
+      }
+    });
+
+
     res.status(201).json(cleanUser);
   } catch (error) {
     next(error);

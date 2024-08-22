@@ -39,6 +39,9 @@ app.use("/api", teacherRoutes);
 const proposalRoutes = require("./routes/proposal.routes");
 app.use("/api", proposalRoutes);
 
+const suggestionlRoutes = require("./routes/suggestions.routes");
+app.use("/api", suggestionlRoutes);
+
 app.use((err, req, res, next) => {
     console.error(err.stack); // Logs the error details to the console
     res.status(500).json({ message: 'Something went wrong', error: err.message });

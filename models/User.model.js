@@ -15,7 +15,7 @@ const userSchema = new Schema(
       required: [true, 'address is required'],
     },
     phone_number: {
-      type: String,
+      type: Stringt,
       required: [true, 'Phone number is required'],
     },
     id_card_picture: {

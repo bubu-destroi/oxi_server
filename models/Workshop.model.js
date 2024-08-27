@@ -25,18 +25,6 @@ const workshopSchema = new Schema(
     },
     category: {
       type: String,
-      enum: [
-        'math',
-        'arts',
-        'science',
-        'dance',
-        'sports',
-        'religion',
-        'social studies',
-        'philosophy',
-        'literature',
-        'technologies',
-      ],
     },
     remote: {
       type: Boolean,

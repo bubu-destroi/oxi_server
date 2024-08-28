@@ -15,7 +15,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     //these formats are for images
-    allowed_formats: ["jpg", "png", "gif"],
+    allowed_formats: ["jpg", "png", "gif", "jpeg", ""],
     //name of the folder on cloudinary
     folder: "project-management",
     // to accept other file types besides images

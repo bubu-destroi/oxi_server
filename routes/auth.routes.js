@@ -7,26 +7,23 @@ const bcrypt = require('bcrypt');
 // ℹ️ Handles password encryption
 const jwt = require('jsonwebtoken');
 
-
 // Require the User model in order to interact with the database
 const User = require('../models/User.model');
 
 // Require necessary (isAuthenticated) middleware in order to control access to specific routes
 const { isAuthenticated } = require('../middleware/jwt.middleware.js');
 
-
-const sendEmail = require('../mailer')
+const sendEmail = require('../mailer');
 
 // How many rounds should bcrypt run the salt (default - 10 rounds)
 const saltRounds = 10;
-
-
 
 // POST /auth/signup  - Creates a new user in the database
 router.post('/signup', async (req, res, next) => {
   try {
     const {
       admin = false,
+      approved = false,
       parent_name,
       address,
       phone_number,
@@ -92,6 +89,7 @@ router.post('/signup', async (req, res, next) => {
 
     const newUser = await User.create({
       admin,
+      approved,
       parent_name,
       address,
       phone_number,
@@ -110,9 +108,8 @@ router.post('/signup', async (req, res, next) => {
 
     const notificationSubject = 'New User Signup Notification';
     const notificationContent = `<h1>New User Signup</h1><p>A new user has signed up with the following details:</p><ul><li>Email: ${email}</li><li>Username: ${learner_username}</li><li>Date of Birth: ${date_of_birth}</li></ul>`;
- 
-    const adminEmail = process.env.EMAIL_USER
-  
+
+    const adminEmail = process.env.EMAIL_USER;
 
     try {
       await sendEmail(email, emailSubject, emailContent);
@@ -122,7 +119,6 @@ router.post('/signup', async (req, res, next) => {
     }
 
     try {
-
       await sendEmail(adminEmail, notificationSubject, notificationContent);
       console.log('Notification email sent successfully.');
     } catch (error) {
@@ -132,6 +128,7 @@ router.post('/signup', async (req, res, next) => {
     const cleanUser = {
       admin: newUser.admin,
       _id: newUser._id,
+      approved: newUser.approved,
       parent_name: newUser.parent_name,
       address: newUser.address,
       phone_number: newUser.phone_number,
@@ -144,11 +141,9 @@ router.post('/signup', async (req, res, next) => {
       courses_taken: newUser.courses_taken,
     };
 
-    
-
     res.status(201).json(cleanUser);
   } catch (error) {
-    console.log("Error during signup:", error)
+    console.log('Error during signup:', error);
     next(error);
   }
 });

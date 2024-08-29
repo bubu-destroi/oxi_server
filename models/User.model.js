@@ -6,6 +6,11 @@ const userSchema = new Schema(
     admin: {
       type: Boolean,
     },
+
+    approved: {
+      type: Boolean,
+      default: false,
+    },
     parent_name: {
       type: String,
       required: [true, 'Parent name is required'],

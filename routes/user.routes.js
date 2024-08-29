@@ -44,6 +44,58 @@ router.get('/users/:userID', async (req, res, next) => {
     next(error);
   }
 });
+router.put('/users/:userID', async (req, res, next) => {
+  try {
+    const { userID } = req.params;
+const {
+  admin,
+  approved,
+  parent_name,
+  address,
+  phone_number,
+  id_card_picture,
+  email,
+  password,
+  learner_username,
+  date_of_birth,
+  age,
+  wishes,
+  signedUp_workshops,
+  userWaitingList,
+  courses_taken} = req.body
+
+    const updatedUser = await User.findByIdAndUpdate(userID, {
+      admin,
+      approved,
+      parent_name,
+      address,
+      phone_number,
+      id_card_picture,
+      email,
+      password,
+      learner_username,
+      date_of_birth,
+      age,
+      wishes,
+      signedUp_workshops,
+      userWaitingList,
+      courses_taken})
+      .populate('wishes', 'title')
+      .populate('signedUp_workshops', 'title')
+      .populate('userWaitingList', 'title')
+      .populate('userWishWaitingList', 'title');
+
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
 
 
 module.exports = router;

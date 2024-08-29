@@ -1,6 +1,6 @@
-const cloudinary = require("cloudinary").v2;
-const multer = require("multer");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 // configure cloudinary
 
@@ -15,9 +15,9 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     //these formats are for images
-    allowed_formats: ["jpg", "png", "gif", "jpeg", ""],
+    allowed_formats: ['jpg', 'png', 'gif', 'jpeg', ''],
     //name of the folder on cloudinary
-    folder: "project-management",
+    folder: 'project-management',
     // to accept other file types besides images
     //resource_type: "raw",
   },
